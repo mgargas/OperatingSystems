@@ -1,0 +1,168 @@
+Testy dla sortowania:
+Ilosc rekordow: 1500, rozmiar: 4
+System:    1461805µs 
+User:       259346µs 
+Real:      1721158µs
+
+System:    1115476µs 
+User:       215659µs 
+Real:      1331162µs
+
+
+Ilosc rekordow: 1500, rozmiar: 512
+System:    1396092µs 
+User:       355730µs 
+Real:      1751909µs
+
+System:    1056854µs 
+User:       424124µs 
+Real:      1480995µs
+
+
+Ilosc rekordow: 1500, rozmiar: 4096
+System:    1615132µs 
+User:       296297µs 
+Real:      1911441µs
+
+System:    1672499µs 
+User:       427910µs 
+Real:      2100416µs
+
+
+Ilosc rekordow: 1500, rozmiar: 8192
+System:    2341738µs 
+User:       307955µs 
+Real:      2649743µs
+
+System:    2627917µs 
+User:       579735µs 
+Real:      3207671µs
+
+
+
+Ilosc rekordow: 6000, rozmiar: 4
+System:   23130175µs 
+User:      4660110µs 
+Real:     27790408µs
+
+System:   15883596µs 
+User:      5911601µs 
+Real:     21795597µs
+
+
+Ilosc rekordow: 6000, rozmiar: 512
+System:   22995840µs 
+User:      5035717µs 
+Real:     28031658µs
+
+System:   18751899µs 
+User:      6207723µs 
+Real:     24960425µs
+
+
+Ilosc rekordow: 6000, rozmiar: 4096
+System:   30090507µs 
+User:      4735475µs 
+Real:     34826921µs
+
+System:   28001346µs 
+User:      6559140µs 
+Real:     34563189µs
+
+
+Ilosc rekordow: 6000, rozmiar: 8192
+System:   40410408µs 
+User:      4619854µs 
+Real:     45031216µs
+
+System:   45342968µs 
+User:      7491540µs 
+Real:     52835314µs
+
+
+
+Testy dla kopiowania:
+Ilosc rekordow: 1500, rozmiar: 4
+System:       9313µs 
+User:            0µs 
+Real:         9320µs
+
+System:       5912µs 
+User:            0µs 
+Real:         5927µs
+
+
+Ilosc rekordow: 1500, rozmiar: 512
+System:       3331µs 
+User:            0µs 
+Real:         3327µs
+
+System:          0µs 
+User:          902µs 
+Real:          898µs
+
+
+Ilosc rekordow: 1500, rozmiar: 4096
+System:       5462µs 
+User:            0µs 
+Real:         5459µs
+
+System:       6698µs 
+User:            0µs 
+Real:         6695µs
+
+
+Ilosc rekordow: 1500, rozmiar: 8192
+System:       9323µs 
+User:            0µs 
+Real:         9320µs
+
+System:      12738µs 
+User:            0µs 
+Real:        12735µs
+
+
+
+Ilosc rekordow: 6000, rozmiar: 4
+System:      14947µs 
+User:            0µs 
+Real:        21898µs
+
+System:       3713µs 
+User:            0µs 
+Real:        28030µs
+
+
+Ilosc rekordow: 6000, rozmiar: 512
+System:      13674µs 
+User:            0µs 
+Real:        13671µs
+
+System:       3513µs 
+User:            0µs 
+Real:         3510µs
+
+
+Ilosc rekordow: 6000, rozmiar: 4096
+System:      15509µs 
+User:         7515µs 
+Real:        23021µs
+
+System:      16338µs 
+User:         7880µs 
+Real:        24214µs
+
+
+Ilosc rekordow: 6000, rozmiar: 8192
+System:      40304µs 
+User:            0µs 
+Real:        40300µs
+
+System:      42688µs 
+User:         3583µs 
+Real:        46267µs
+
+Wnioski:
+1. Po przeanalizowaniu czasów sortowania, można zaobserwować, że operacje sortowania z wykorzystaniem funkcji systemowych są wolniejsze niż te z wykorzystaniem bibliotek bibliotecznych. 
+2. Funkcje systemowe zachowują się jednak lepiej w przypadku większych buforów, jak np. 8192
+
