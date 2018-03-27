@@ -1,0 +1,4 @@
+ls -l -a
+pwd
+./memory_killer
+./time_killer
