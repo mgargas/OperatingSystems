@@ -1,0 +1,1 @@
+cat scores | grep Villanova scores | cut -c 1-10
