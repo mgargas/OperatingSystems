@@ -12,3 +12,9 @@ clean:
 	rm -f *.o
 
 tests:
+
+run_master:
+	./master fifo
+
+run_slave:
+	./slave fifo 5
