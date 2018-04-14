@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <time.h>
 
 #define LINE_MAX 256
 
@@ -31,6 +32,7 @@ int main(int argc, char** argv) {
     char sys_date[LINE_MAX];
     char message[LINE_MAX];
     FILE* date;
+    srand((unsigned int) (time(NULL) * getpid()));
     for(int i=0;i<N;i++){
         date = popen("date", "r");
         if(date == NULL){
@@ -41,7 +43,7 @@ int main(int argc, char** argv) {
         sprintf(message, "Slave: %d - %s", getpid(), sys_date);
         write(pipe, message, strlen(message));
         fclose(date);
-        sleep(4);
+        sleep((unsigned int) (rand() % 4 + 2));
     }
     close(pipe);
     return 0;
