@@ -68,6 +68,10 @@ int main(int argc, char** argv) {
     pid_t pid;
     while(fgets(line, LINE_MAX, file)){
         char** programs = split_programs(line, &count);
+        if(count < 5){
+	        printf("You have to pass at least 5 commands in line.\n");
+                exit(1);
+	}
         fd = malloc(sizeof(int) * 2 * (count));
         for(int i = 0; i < count ; i++) {
             if(pipe(&fd[2 * i]) == -1) {
