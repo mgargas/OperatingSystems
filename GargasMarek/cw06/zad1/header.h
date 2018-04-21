@@ -7,14 +7,15 @@
 
 #define SERVER_KEY 101
 #define MAX_LENGTH 1023
-#define MAX_CLIENTS 20
+#define MAX_CLIENTS 2
 
 enum communicate {
     MIRROR = 1,
     CALC = 2,
     TIME = 3,
     END = 4,
-    REGISTER = 5
+    REGISTER = 5,
+    STOP = 6
 };
 
 typedef struct msg{
