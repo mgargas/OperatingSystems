@@ -25,6 +25,8 @@ void end_request(msg message);
 void stop_request(msg message);
 void int_handler(int signo);
 
+#define failure_exit(message) { fprintf(stderr, message); exit(EXIT_FAILURE);}
+
 int main()
 {
     key_t key;
@@ -36,7 +38,7 @@ int main()
     key = ftok(path, getpid());
     client_queue = msgget(key, 0666 | IPC_CREAT | IPC_EXCL);
 
-    if(signal(SIGINT, int_handler) == SIG_ERR) printf("Registering INT failed!");
+    if(signal(SIGINT, int_handler) == SIG_ERR) failure_exit("Registering INT failed!");
 
     msg message;
     register_request(message);
@@ -73,10 +75,10 @@ void register_request(msg message){
     sprintf(message.text, "%d", client_queue);
     message.type = REGISTER;
     message.sender_pid = getpid();
-    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) printf("REGISTER request failed");
-    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) printf("catching REGISTER response failed!");
-    if(sscanf(message.text, "%d", &client_id) < 1) printf("scanning REGISTER response failed!");
-    if(client_id < 0) printf("Server cannot have more clients!");
+    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) failure_exit("REGISTER request failed");
+    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) failure_exit("catching REGISTER response failed!");
+    if(sscanf(message.text, "%d", &client_id) < 1) failure_exit("scanning REGISTER response failed!");
+    if(client_id < 0) failure_exit("Server cannot have more clients!");
 
     printf("Client registered! My session nr is %d!\n", client_id);
 }
@@ -89,8 +91,8 @@ void mirror_request(msg message){
         printf("Too many characters!\n");
         return;
     }
-    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) printf("MIRROR request failed!");
-    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) printf("catching MIRROR response failed!");
+    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) failure_exit("MIRROR request failed!");
+    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) failure_exit("catching MIRROR response failed!");
     printf("%s", message.text);
 }
 
@@ -102,8 +104,8 @@ void calc_request(msg message){
         printf("Too many characters!\n");
         return;
     }
-    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) printf("CALC request failed!");
-    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) printf("catching CALC response failed!");
+    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) failure_exit("CALC request failed!");
+    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) failure_exit("catching CALC response failed!");
     printf("%s", message.text);
 }
 
@@ -111,8 +113,8 @@ void calc_request(msg message){
 void time_request(msg message){
     message.type = TIME;
     message.sender_pid = getpid();
-    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) printf("TIME request failed!");
-    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) printf("catching TIME response failed!");
+    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) failure_exit("TIME request failed!");
+    if(msgrcv(client_queue, &message, MSG_SIZE, 0, 0) == -1) failure_exit("catching TIME response failed!");
     printf("%s", message.text);
 }
 
@@ -120,14 +122,14 @@ void time_request(msg message){
 void end_request(msg message){
     message.type = END;
     message.sender_pid = getpid();
-    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) printf("END request failed!");
+    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) failure_exit("END request failed!");
 }
 
 
 void stop_request(msg message){
     message.type = STOP;
     message.sender_pid = getpid();
-    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) printf("STOP request failed!");
+    if(msgsnd(server_queue, &message, MSG_SIZE, 0) == -1) failure_exit("STOP request failed!");
 }
 
 

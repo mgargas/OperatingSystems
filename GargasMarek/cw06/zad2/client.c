@@ -9,7 +9,7 @@
 #include <signal.h>
 #include <errno.h>
 #include "header.h"
-
+#define failure_exit(message) { fprintf(stderr, message); exit(EXIT_FAILURE);}
 
 mqd_t server_queue;
 mqd_t client_queue;
@@ -41,7 +41,7 @@ int main()
     if(client_queue == -1) printf("error");
 
 
-    if(signal(SIGINT, int_handler) == SIG_ERR) printf("Registering INT failed!");
+    if(signal(SIGINT, int_handler) == SIG_ERR) failure_exit("Registering INT failed!");
 
     register_request(message);
     char cmd[20];
@@ -69,7 +69,7 @@ int main()
 
         }else printf("Wrong command!\n");
     }
-    if(mq_close(client_queue) == -1) printf("Closing client queue failed with error: %d \n", errno);
+    if(mq_close(client_queue) == -1) failure_exit("Closing client queue failed");
     mq_unlink(client_path);
     exit(EXIT_SUCCESS);
 }
@@ -78,10 +78,10 @@ void register_request(msg message){
     sprintf(message.text, "%d", client_queue);
     message.type = REGISTER;
     message.sender_pid = getpid();
-    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) printf("REGISTER request failed");
-    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) printf("catching REGISTER response failed!");
-    if(sscanf(message.text, "%d", &client_id) < 1) printf("scanning REGISTER response failed!");
-    if(client_id < 0) printf("Server cannot have more clients!");
+    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) failure_exit("REGISTER request failed");
+    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) failure_exit("catching REGISTER response failed!");
+    if(sscanf(message.text, "%d", &client_id) < 1) failure_exit("scanning REGISTER response failed!");
+    if(client_id < 0) failure_exit("Server cannot have more clients!");
 
     printf("Client registered! My session nr is %d!\n", client_id);
 }
@@ -94,8 +94,8 @@ void mirror_request(msg message){
         printf("Too many characters!\n");
         return;
     }
-    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) printf("MIRROR request failed!");
-    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) printf("catching MIRROR response failed!");
+    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) failure_exit("MIRROR request failed!");
+    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) failure_exit("catching MIRROR response failed!");
     printf("%s", message.text);
 }
 
@@ -107,8 +107,8 @@ void calc_request(msg message){
         printf("Too many characters!\n");
         return;
     }
-    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) printf("CALC request failed!");
-    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) printf("catching CALC response failed!");
+    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) failure_exit("CALC request failed!");
+    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) failure_exit("catching CALC response failed!");
     printf("%s", message.text);
 }
 
@@ -116,8 +116,8 @@ void calc_request(msg message){
 void time_request(msg message){
     message.type = TIME;
     message.sender_pid = getpid();
-    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) printf("TIME request failed!");
-    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) printf("catching TIME response failed!");
+    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) failure_exit("TIME request failed!");
+    if(mq_receive(client_queue, (char*)&message, MSG_SIZE, 0) == -1) failure_exit("catching TIME response failed!");
     printf("%s", message.text);
 }
 
@@ -125,14 +125,14 @@ void time_request(msg message){
 void end_request(msg message){
     message.type = END;
     message.sender_pid = getpid();
-    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) printf("END request failed!");
+    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) failure_exit("END request failed!");
 }
 
 
 void stop_request(msg message){
     message.type = STOP;
     message.sender_pid = getpid();
-    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) printf("STOP request failed!");
+    if(mq_send(server_queue, (char*)&message, MSG_SIZE, 1) == -1) failure_exit("STOP request failed!");
 }
 
 

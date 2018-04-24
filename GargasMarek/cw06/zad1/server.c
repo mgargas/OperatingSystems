@@ -11,7 +11,7 @@
 #include <time.h>
 #include <signal.h>
 #include "header.h"
-
+#define failure_exit(message) { fprintf(stderr, message); exit(EXIT_FAILURE);}
 int client_counter = -1;
 int client_data[MAX_CLIENTS][2]; // clientPID, clientQID
 int received_end;
@@ -36,7 +36,7 @@ int main() {
     char* path = getenv("HOME");
     key = ftok(path, SERVER_KEY);
 
-    if(signal(SIGINT, int_handler) == SIG_ERR) printf("Registering INT failed!");
+    if(signal(SIGINT, int_handler) == SIG_ERR) failure_exit("Registering INT failed!");
 
     server_queue = msgget(key, 0666 | IPC_CREAT);
     msg message;
@@ -45,10 +45,10 @@ int main() {
     init_client_data();
     while(1){
         if(received_end) {
-            if(msgctl(server_queue, IPC_STAT, &currentState) == -1) printf("Getting current state of public queue failed!\n");
+            if(msgctl(server_queue, IPC_STAT, &currentState) == -1) failure_exit("Getting current state of public queue failed!\n");
             if(currentState.msg_qnum == 0) break;
         }
-        if(msgrcv(server_queue, &message, MSG_SIZE, 0, 0) == -1) printf("Receiving message by the server failed!");
+        if(msgrcv(server_queue, &message, MSG_SIZE, 0, 0) == -1) failure_exit("Receiving message by the server failed!");
         switch (message.type){
             case REGISTER:
                 register_service(message);
@@ -88,7 +88,7 @@ void register_service(msg message)
     message.sender_pid = getpid();
     message.type = REGISTER;
     if(msgsnd(client_queue, &message, MSG_SIZE, 0) == -1) {
-        printf("REGISTER response failed!");
+        failure_exit("REGISTER response failed!");
     }
 }
 
@@ -104,7 +104,7 @@ void mirror_service(msg message){
         message.text[msg_len - i - 1] = buff;
     }
     if(msgsnd(client_queue, &message, MSG_SIZE, 0) == -1) {
-       printf("MIRROR response failed!");
+       failure_exit("MIRROR response failed!");
     }
 }
 
@@ -117,7 +117,7 @@ void calc_service(msg message){
     FILE* calc = popen(cmd, "r");
     fgets(message.text, MAX_LENGTH, calc);
     pclose(calc);
-    if(msgsnd(client_queue, &message, MSG_SIZE, 0) == -1) printf("CALC response failed!");
+    if(msgsnd(client_queue, &message, MSG_SIZE, 0) == -1) failure_exit("CALC response failed!");
 }
 
 
@@ -127,14 +127,14 @@ void time_service(msg message){
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     sprintf(message.text, "now: %d-%d-%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-    if(msgsnd(client_queue, &message, MSG_SIZE, 0) == -1) printf("TIME response failed!");
+    if(msgsnd(client_queue, &message, MSG_SIZE, 0) == -1) failure_exit("TIME response failed!");
 }
 
 
 void stop_service(msg message){
     int client_queue = get_client_qid(message.sender_pid);
     if(delete_from_client_data(message.sender_pid, client_queue) == 0) client_counter--;
-    else printf("nie dziala");
+    else failure_exit("Couldn't delete this client");
 }
 
 
@@ -147,7 +147,7 @@ int get_client_qid(pid_t client_pid){
     for(int i=0; i<MAX_CLIENTS; i++){
         if(client_data[i][0] == client_pid) return client_data[i][1];
     }
-    printf("Couldnd't find client with this client_pid");
+    failure_exit("Couldnd't find client with this client_pid");
     return -1;
 }
 
